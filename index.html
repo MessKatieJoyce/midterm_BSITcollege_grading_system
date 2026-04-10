@@ -87,7 +87,7 @@ input[type="text"] {
 }
 
 input[type="text"]:hover {
-    border: 1px solid #3e124fcb;
+    border: 1px solid #2d0f56cb;
     outline: none;
 }
 
@@ -147,6 +147,14 @@ th, td {
     white-space: nowrap;
 }
 
+th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #311839;
+    color: white;
+}
+
 th.group {
     background: #311839;
     color: white;
@@ -154,6 +162,7 @@ th.group {
 
 .avg {
     background: #dbeafe;
+    color: #200827;
     font-weight: bold;
 }
 
@@ -229,24 +238,6 @@ input[type="number"] {
     background: rgba(255,255,255,0.1);
 }
 
-.footer {
-    margin-top: 40px;
-    padding: 20px;
-    text-align: center;
-    background: #200827;
-    color: #dbeafe;
-    font-size: 12px;
-    border-top: 3px solid #75597fcb;
-}
-
-.footer p {
-    margin: 5px 0;
-}
-
-.footer i {
-    margin-right: 5px;
-    color: #c084fc;
-}
 
 
 
@@ -357,17 +348,7 @@ input[type="number"] {
 </div>
 </div>
 
-<footer class="footer">
-    <p>
-        <i class="fa-solid fa-graduation-cap"></i>
-        Midterm Grading System
-    </p>
 
-
-    <p>
-        <i class="fa-solid fa-code"></i> Built with HTML, CSS & JavaScript • © 2026
-    </p>
-</footer>
 
 
 <script>
