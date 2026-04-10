@@ -7,6 +7,11 @@
 <title>Midterm Grading System</title>
 
 <style>
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Segoe UI', sans-serif;
     background: #f1f5f9; 
@@ -25,7 +30,7 @@ i {
         border-bottom:3px solid #1e2228;
         padding: 5px 20px;
         box-shadow:0 3px 8px rgba(6, 0, 26, 0.777);
-        margin: o;
+        margin: 0;
 }
 
 .topbar h3{
@@ -252,16 +257,16 @@ input[type="number"] {
 
 .footer {
     margin-top: 40px;
-    padding: 20px;
+    padding: 15px;
     text-align: center;
     background: #200827;
-    color: #dbeafe;
     font-size: 12px;
     border-top: 3px solid #75597fcb;
 }
 
 .footer p {
     margin: 5px 0;
+    color: #b3b9c3;
 }
 
 .footer i {
@@ -273,6 +278,7 @@ input[type="number"] {
 
 @media (max-width: 768px) {
     .topbar h3{
+        margin-left: 8px;
         font-size: 10px;
     }
 
@@ -751,7 +757,17 @@ function compute(input) {
    }
 
 
-  
+// AUTO SCROLL INPUT INTO VIEW (MOBILE FIX)
+document.addEventListener("focusin", function(e) {
+    if (e.target.tagName === "INPUT") {
+        setTimeout(() => {
+            e.target.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }, 300); // wait for keyboard to open
+    }
+});
 
 </script>
 
