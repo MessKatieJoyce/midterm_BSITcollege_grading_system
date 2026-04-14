@@ -607,12 +607,24 @@ function deleteRow(btn) {
 // AUTO SCROLL INPUT INTO VIEW (MOBILE FIX)
 document.addEventListener("focusin", function(e) {
     if (e.target.tagName === "INPUT") {
+
         setTimeout(() => {
-            e.target.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        }, 300); // wait for keyboard to open
+            let rect = e.target.getBoundingClientRect();
+
+            // Check if input is outside visible screen
+            let isOutOfView = (
+                rect.bottom > window.innerHeight || 
+                rect.top < 0
+            );
+
+            if (isOutOfView) {
+                e.target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+
+        }, 300);
     }
 });
 
