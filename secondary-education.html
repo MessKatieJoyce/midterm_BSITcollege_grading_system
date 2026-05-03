@@ -33,11 +33,11 @@ i { margin-right: 5px; }
 .teacher-menu summary .fa-chevron-down { transition: transform 0.2s ease; }
 .teacher-menu[open] summary .fa-chevron-down { transform: rotate(180deg); }
 .teacher-submenu { margin: 2px 0 6px 24px; border-left: 2px solid #e5e7eb; padding-left: 7px; }
-.notice-wrapper { flex: 1; width: min(900px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+.notice-wrapper { box-sizing: border-box; flex: 1; width: min(900px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
 .page-heading { text-align: center; padding: 42px 20px 0; }
 .page-heading h2 { margin: 0 0 8px; font-weight: 800; color: #1f1024; }
 .page-heading h4 { text-align:center; color: #332638f0; font-weight:500; margin: 0; font-style:italic; }
-.notice-panel { width: 100%; text-align: center; padding: 36px 30px; border: 1px solid #a29da3a5; border-radius: 10px; box-shadow: 0 4px 15px rgba(184, 179, 228, 0.81); }
+.notice-panel { box-sizing: border-box; width: 100%; text-align: center; padding: 36px 30px; border: 1px solid #a29da3a5; border-radius: 10px; box-shadow: 0 4px 15px rgba(184, 179, 228, 0.81); }
 .notice-panel h2 { margin: 0 0 8px; font-weight: 800; color: #1f1024; }
 .notice-panel h4 { text-align:center; color: #332638f0; font-weight:500; margin: 0; font-style:italic; }
 .notice-panel p { text-align:center; max-width:600px; margin: 20px auto 0; color:#4b5563; font-size:12px; line-height:1.6; }
@@ -46,14 +46,39 @@ i { margin-right: 5px; }
 .footer { margin-top: 50px; padding: 15px; text-align: center; background: #200827; font-size: 12px; border-top: 3px solid #75597fcb; display: flex; flex-direction: column; align-items: center; }
 .footer p { margin: 5px 0; color: #b3b9c3; text-align: center; }
 .footer i { margin-right: 5px; color: #c084fc; }
-@media (max-width: 768px) { body { min-height: 100svh; } .topbar { padding: 5px 10px; } .topbar h3 { font-size: 10px; } .menu-toggle, .sidebar-close { width: 32px; height: 32px; } .sidebar-header h3, .notice-panel h2, .page-heading h2 { font-size: 17px; } .sidebar-nav a, .teacher-menu summary { font-size: 12px; } .page-heading { padding: 30px 12px 0; } .notice-wrapper { width: calc(100% - 24px); padding: 24px 0 36px; } .notice-panel { padding: 28px 18px; } .notice-panel h4, .page-heading h4 { font-size: small; } .notice-panel p { font-size: 10px; } .footer { font-size: 10px; margin-top: auto; } }
-.page-loader { position: fixed; inset: 0; z-index: 10000; background: #f1f5f9; display: flex; align-items: center; justify-content: center; transition: opacity 0.35s ease, visibility 0.35s ease; }
+
+@media (max-width: 768px) { 
+    body { min-height: 100svh; } 
+    .topbar { padding: 5px 10px; } 
+    .topbar h3 { font-size: 10px; } 
+    .menu-toggle, .sidebar-close { width: 32px; height: 32px; } 
+    .sidebar-header h3, .notice-panel h2, .page-heading h2 { font-size: 17px; } 
+    .sidebar-nav a, .teacher-menu summary { font-size: 12px; } 
+    .page-heading { padding: 30px 12px 0; } 
+    .notice-wrapper { width: calc(100% - 24px); padding: 24px 0 36px; } 
+    .notice-panel { padding: 28px 18px; } 
+    .notice-panel h4, .page-heading h4 { font-size: small; } 
+    .notice-panel p { font-size: 10px; } 
+    .footer { font-size: 10px; margin-top: auto; } 
+}
+
+.page-loader { 
+    position: fixed; inset: 0; z-index: 10000; background: #f1f5f9; display: flex; align-items: center; justify-content: center; transition: opacity 0.35s ease, visibility 0.35s ease; }
 .page-loader.hide { opacity: 0; visibility: hidden; pointer-events: none; }
 .loader-content { text-align: center; color: #311839; }
 .loader-spinner { width: 46px; height: 46px; margin: 0 auto 14px; border: 4px solid #d8c7e0; border-top-color: #311839; border-radius: 50%; animation: loaderSpin 0.8s linear infinite; }
-.loader-content p { margin: 0; font-size: 12px; font-weight: 650; color: #332638f0; }
-body.is-loading { overflow: hidden; }
-@keyframes loaderSpin { to { transform: rotate(360deg); } }
+.loader-content p { 
+    margin: 0; 
+    font-size: 12px; 
+    font-weight: 650; 
+    color: #332638f0; 
+}
+body.is-loading { 
+    overflow: hidden; 
+}
+@keyframes loaderSpin { 
+    to { transform: rotate(360deg); } 
+}
 </style>
 </head>
 <body class="is-loading">
