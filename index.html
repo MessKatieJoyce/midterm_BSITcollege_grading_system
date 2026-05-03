@@ -557,6 +557,10 @@ let config = {
     exam: [] // ✅ ADD THIS
 };
 
+const STORAGE_KEY = "kateGradingSystemState";
+const groupOrder = ["quiz", "lab", "assign", "att", "exam"];
+let isLoadingSavedState = false;
+
 function getExamAddButton() {
     return document.querySelector("button[onclick=\"addAssessment('exam')\"]");
 }
@@ -634,6 +638,45 @@ function updateTotalHeaders() {
     });
 }
 
+function createAssessmentHeader(type, total, number) {
+    let th = document.createElement("th");
+
+    if (type === "exam") {
+        th.innerHTML = `
+            Major Exam (${total})  
+            <button type="button" class="header-delete-btn" onclick="removeExamColumns()" aria-label="Delete Major Exam">      
+            <i class="fa-solid fa-trash"></i>
+            </button>
+            
+        `;
+    } else {
+        th.innerText = `${type.toUpperCase()} ${number} (${total})`;
+    }
+
+    return th;
+}
+
+function rebuildAssessmentHeaders() {
+    const subHeader = document.getElementById("subHeader");
+
+    Array.from(subHeader.children).forEach(th => {
+        if (!th.classList.contains("total") && !th.classList.contains("avg")) {
+            th.remove();
+        }
+    });
+
+    let subHeaderIndex = 0;
+
+    groupOrder.forEach(type => {
+        config[type].forEach((total, index) => {
+            const th = createAssessmentHeader(type, total, index + 1);
+            subHeader.insertBefore(th, subHeader.children[subHeaderIndex + index]);
+        });
+
+        subHeaderIndex += config[type].length + 2;
+    });
+}
+
 
 function closeModal() {
     document.getElementById("modal").style.display = "none";
@@ -663,6 +706,54 @@ function updateRowNumbers() {
     rows.forEach((row, index) => {
         row.querySelector(".row-number").textContent = index + 1;
     });
+}
+
+function getScoresFromRow(row) {
+    return Array.from(row.querySelectorAll("input")).map(input => input.value);
+}
+
+function createStudentRow(name, scores = []) {
+    let row = document.createElement("tr");
+
+    row.innerHTML = `<td class="row-number"></td><td>${name}</td>`;
+
+    createInputs(row, config.quiz.length);
+    row.innerHTML += `<td class="total">0</td>`;
+    row.innerHTML += `<td class="avg">0</td>`;
+
+    createInputs(row, config.lab.length);
+    row.innerHTML += `<td class="total">0</td>`;
+    row.innerHTML += `<td class="avg">0</td>`;
+
+    createInputs(row, config.assign.length);
+    row.innerHTML += `<td class="total">0</td>`;
+    row.innerHTML += `<td class="avg">0</td>`;
+
+    createInputs(row, config.att.length);
+    row.innerHTML += `<td class="total">0</td>`;
+    row.innerHTML += `<td class="avg">0</td>`;
+
+    createInputs(row, config.exam.length);
+    row.innerHTML += `<td class="total">0</td>`;
+    row.innerHTML += `<td class="avg">0</td>`;
+
+    row.innerHTML += `<td>0</td>`; // Final Grade
+    row.innerHTML += `<td>0</td>`; // Equivalent
+    row.innerHTML += `<td>-</td>`; // Remarks
+
+    row.innerHTML += `
+    <td>
+        <button onclick="deleteRow(this)" class="delete-act" aria-label="Delete student">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+    </td>
+    `;
+
+    row.querySelectorAll("input").forEach((input, index) => {
+        input.value = scores[index] || "";
+    });
+
+    return row;
 }
 
 
@@ -714,6 +805,8 @@ function addStudent() {
     document.getElementById("studentName").value = "";
 
     sortTable();
+    computeRow(row);
+    saveState();
 
     document.getElementById("studentName").focus();
 }
@@ -733,6 +826,7 @@ function formatName(name) {
 function deleteRow(btn) {
     let row = btn.closest("tr");
     row.remove();
+    saveState();
     updateRowNumbers(); // ✅ ADD THIS
 }
 
@@ -741,6 +835,65 @@ function createInputs(row, count) {
         let td = document.createElement("td");
         td.innerHTML = `<input type="number" oninput="compute(this)">`;
         row.appendChild(td);
+    }
+}
+
+function saveState() {
+    if (isLoadingSavedState) return;
+
+    const state = {
+        config: {
+            quiz: [...config.quiz],
+            lab: [...config.lab],
+            assign: [...config.assign],
+            att: [...config.att],
+            exam: [...config.exam]
+        },
+        students: Array.from(document.querySelectorAll("#body tr")).map(row => ({
+            name: row.children[1].textContent,
+            scores: getScoresFromRow(row)
+        }))
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadSavedState() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+
+    try {
+        const state = JSON.parse(saved);
+        if (!state || !state.config || !Array.isArray(state.students)) return;
+
+        isLoadingSavedState = true;
+
+        config = {
+            quiz: Array.isArray(state.config.quiz) ? state.config.quiz : [],
+            lab: Array.isArray(state.config.lab) ? state.config.lab : [],
+            assign: Array.isArray(state.config.assign) ? state.config.assign : [],
+            att: Array.isArray(state.config.att) ? state.config.att : [],
+            exam: Array.isArray(state.config.exam) ? state.config.exam : []
+        };
+
+        document.getElementById("body").innerHTML = "";
+        rebuildAssessmentHeaders();
+        updateColspan();
+        updateTotalHeaders();
+
+        state.students.forEach(student => {
+            if (!student.name) return;
+
+            const row = createStudentRow(student.name, Array.isArray(student.scores) ? student.scores : []);
+            document.getElementById("body").appendChild(row);
+        });
+
+        sortTable();
+        recomputeAllRows();
+        isLoadingSavedState = false;
+    } catch (error) {
+        console.error("Unable to load saved grade sheet.", error);
+        isLoadingSavedState = false;
     }
 }
 
@@ -754,8 +907,14 @@ function removeExamColumns() {
 
     if (!examCount) return;
 
+    const examHeaderStartIndex =
+        config.quiz.length + 2 +
+        config.lab.length + 2 +
+        config.assign.length + 2 +
+        config.att.length + 2;
+
     for (let i = 0; i < examCount; i++) {
-        subHeader.removeChild(subHeader.children[subHeader.children.length - 2]);
+        subHeader.removeChild(subHeader.children[examHeaderStartIndex]);
     }
 
     document.querySelectorAll("#body tr").forEach(row => {
@@ -776,6 +935,7 @@ function removeExamColumns() {
     updateColspan();
     updateTotalHeaders();
     recomputeAllRows();
+    saveState();
 }
 
 
@@ -819,24 +979,15 @@ function submitAssessment() {
     }
     avgCellIndex += config[currentType].length - 1;
 
-    let th = document.createElement("th");
-    if (currentType === "exam") {
-        th.innerHTML = `
-            Major Exam (${total})  
-            <button type="button" class="header-delete-btn" onclick="removeExamColumns()" aria-label="Delete Major Exam">      
-            <i class="fa-solid fa-trash"></i>
-            </button>
-            
-        `;
-    } else {
-        th.innerText = `${currentType.toUpperCase()} ${config[currentType].length} (${total})`;
-    }
+    let th = createAssessmentHeader(currentType, total, config[currentType].length);
 
     subHeader.insertBefore(th, subHeader.children[avgCellIndex]);
 
     updateColspan();
     updateTotalHeaders();
     updateRows(currentType);
+    recomputeAllRows();
+    saveState();
     closeModal();
 }
 
@@ -848,6 +999,7 @@ function submitAssessment() {
 function compute(input) {
     let row = input.closest("tr");
     computeRow(row);
+    saveState();
 }
 
 function computeRow(row) {
@@ -961,6 +1113,17 @@ document.addEventListener("focusin", function(e) {
             });
         }, 200); // wait for keyboard to open
     }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    loadSavedState();
+
+    document.getElementById("modalInput").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            submitAssessment();
+        }
+    });
 });
 
 </script>
