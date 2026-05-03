@@ -493,15 +493,15 @@ input[type="number"] {
 
 <tr id="subHeader">
     
-    <th class="total">Total</th>
+    <th class="total">Total (0)</th>
     <th class="avg">Average (20%)</th>
-    <th class="total">Total</th>
+    <th class="total">Total (0)</th>
     <th class="avg">Average (30%)</th>
-    <th class="total">Total</th>
+    <th class="total">Total (0)</th>
     <th class="avg">Average (10%)</th>
-    <th class="total">Total</th>
+    <th class="total">Total (0)</th>
     <th class="avg">Average (10%)</th>
-    <th class="total">Total</th>
+    <th class="total">Total (0)</th>
     <th class="avg">Average (30%)</th>
 </tr>
 </thead>
@@ -592,6 +592,23 @@ function updateColspan() {
     groups[2].colSpan = config.assign.length + 2;
     groups[3].colSpan = config.att.length + 2;
     groups[4].colSpan = config.exam.length + 2;
+}
+
+function formatPoints(points) {
+    return Number.isInteger(points) ? points : points.toFixed(2);
+}
+
+function updateTotalHeaders() {
+    const subHeader = document.getElementById("subHeader");
+    const groupOrder = ["quiz", "lab", "assign", "att", "exam"];
+    let subHeaderIndex = 0;
+
+    groupOrder.forEach(type => {
+        const totalPoints = config[type].reduce((sum, points) => sum + points, 0);
+        const totalHeaderIndex = subHeaderIndex + config[type].length;
+        subHeader.children[totalHeaderIndex].textContent = `Total (${formatPoints(totalPoints)})`;
+        subHeaderIndex += config[type].length + 2;
+    });
 }
 
 
@@ -734,6 +751,7 @@ function removeExamColumns() {
     config.exam = [];
     getExamAddButton().disabled = false;
     updateColspan();
+    updateTotalHeaders();
     recomputeAllRows();
 }
 
@@ -794,6 +812,7 @@ function submitAssessment() {
     subHeader.insertBefore(th, subHeader.children[avgCellIndex]);
 
     updateColspan();
+    updateTotalHeaders();
     updateRows(currentType);
     closeModal();
 }
