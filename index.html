@@ -10,13 +10,14 @@
 
 html {
     scroll-behavior: smooth;
+    min-height: 100%;
 }
 
 body {
     font-family: 'Segoe UI', sans-serif;
     background: #f1f5f9; 
     margin: 0;
-    
+    min-height: 100vh;
 }
 
 i {
@@ -335,7 +336,7 @@ input[type="number"] {
 }
 
 .footer {
-    margin-top: 40px;
+    margin-top: 70px;
     padding: 15px;
     text-align: center;
     background: #200827;
@@ -358,8 +359,29 @@ input[type="number"] {
 }
 
 
+@media (max-width: 1200px) {
+    body {
+        min-height: 100vh;
+        min-height: 120svh;
+        
+    }
+
+    .footer {
+        font-size: 11px;
+        margin-top: auto;
+    }
+}
+
+
 
 @media (max-width: 768px) {
+    body {
+        min-height: 90vh;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+    }
+
     .topbar h3{
         margin-left: 8px;
         font-size: 10px;
@@ -471,8 +493,9 @@ input[type="number"] {
         padding: 6px;
     }
 
-    footer {
+    .footer {
         font-size: 10px;
+        margin-top: auto;
     }
 }
   
