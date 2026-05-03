@@ -154,6 +154,34 @@ input[type="text"]:hover {
     margin: 0;
 }
 
+.table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.clear-table-btn {
+    background: #fff1f1;
+    color: #7f1d1d;
+    border: 1px solid #7f1d1d;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 550;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.clear-table-btn i {
+    margin-right: 5px;
+}
+
+.clear-table-btn:hover {
+    background: #7f1d1d;
+    color: white;
+}
+
 .container p {
     text-align: left;
     margin-left: 0;
@@ -414,6 +442,16 @@ input[type="number"] {
         font-size: medium;
     }
 
+    .table-heading {
+        align-items: flex-start;
+    }
+
+    .clear-table-btn {
+        padding: 6px 7px;
+        font-size: 10px;
+    
+    }
+
     .container p {
         font-size: 10px;
     }
@@ -486,10 +524,15 @@ input[type="number"] {
 
 <div class="container">
 
+    <div class="table-heading">
     <h3>
     Grade Sheet Table
     </h3>
-
+    <button type="button" class="clear-table-btn" onclick="clearTableData()">
+        <i class="fa-solid fa-trash-can"></i> Clear All Data
+    </button>
+    </div>
+  
     <p>
         Enter the student's scores on the input field to accumulate the total final grade automatically.
     </p>
@@ -895,6 +938,30 @@ function loadSavedState() {
         console.error("Unable to load saved grade sheet.", error);
         isLoadingSavedState = false;
     }
+}
+
+function clearTableData() {
+    const shouldClear = confirm("Clear all assessment columns, student rows, and saved scores?");
+    if (!shouldClear) return;
+
+    config = {
+        quiz: [],
+        lab: [],
+        assign: [],
+        att: [],
+        exam: []
+    };
+
+    currentType = null;
+    document.getElementById("body").innerHTML = "";
+    document.getElementById("studentName").value = "";
+    closeModal();
+    closeReplaceExamModal();
+    rebuildAssessmentHeaders();
+    updateColspan();
+    updateTotalHeaders();
+    getExamAddButton().disabled = false;
+    localStorage.removeItem(STORAGE_KEY);
 }
 
 
