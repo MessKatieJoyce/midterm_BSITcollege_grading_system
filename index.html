@@ -199,6 +199,12 @@ th.group {
     font-weight: bold;
 }
 
+.total {
+    background: #fef3c7;
+    color: #200827;
+    font-weight: bold;
+}
+
 tr:hover {
     background: #eaf3ff;
 }
@@ -472,11 +478,11 @@ input[type="number"] {
 <tr>
     <th rowspan="2">No.</th>
     <th rowspan="2">Name</th>
-    <th class="group" colspan="1">Quiz (20%)</th>
-    <th class="group" colspan="1">Laboratory (30%)</th>
-    <th class="group" colspan="1">Assignment (10%)</th>
-    <th class="group" colspan="1">Attendance (10%)</th>
-    <th class="group" colspan="1">Major Exam (30%)</th>
+    <th class="group" colspan="2">Quiz (20%)</th>
+    <th class="group" colspan="2">Laboratory (30%)</th>
+    <th class="group" colspan="2">Assignment (10%)</th>
+    <th class="group" colspan="2">Attendance (10%)</th>
+    <th class="group" colspan="2">Major Exam (30%)</th>
     <th rowspan="2">Final Grade</th>
     <th rowspan="2">Equivalent</th>
     <th rowspan="2">Remarks</th>
@@ -487,10 +493,15 @@ input[type="number"] {
 
 <tr id="subHeader">
     
+    <th class="total">Total</th>
     <th class="avg">Average%</th>
+    <th class="total">Total</th>
     <th class="avg">Average%</th>
+    <th class="total">Total</th>
     <th class="avg">Average%</th>
+    <th class="total">Total</th>
     <th class="avg">Average%</th>
+    <th class="total">Total</th>
     <th class="avg">Average%</th>
 </tr>
 </thead>
@@ -560,9 +571,9 @@ function updateRows(type) {
         // Calculate where to insert new input
         let insertIndex = 2; // start after No. and Name
         for (let i = 0; i < groupIndex; i++) {
-            insertIndex += config[groupOrder[i]].length + 1; // previous group + Avg%
+            insertIndex += config[groupOrder[i]].length + 2; // previous group + Total + Avg%
         }
-        insertIndex += config[type].length - 1; // insert before Avg% of this group
+        insertIndex += config[type].length - 1; // insert before Total of this group
 
         let td = document.createElement("td");
         td.innerHTML = `<input type="number" oninput="compute(this)">`;
@@ -576,11 +587,11 @@ function updateRows(type) {
 // --- Update colspans of main group headers ---
 function updateColspan() {
     const groups = document.querySelectorAll(".group");
-    groups[0].colSpan = config.quiz.length + 1;
-    groups[1].colSpan = config.lab.length + 1;
-    groups[2].colSpan = config.assign.length + 1;
-    groups[3].colSpan = config.att.length + 1;
-    groups[4].colSpan = config.exam.length + 1;
+    groups[0].colSpan = config.quiz.length + 2;
+    groups[1].colSpan = config.lab.length + 2;
+    groups[2].colSpan = config.assign.length + 2;
+    groups[3].colSpan = config.att.length + 2;
+    groups[4].colSpan = config.exam.length + 2;
 }
 
 
@@ -627,18 +638,23 @@ function addStudent() {
     row.innerHTML = `<td class="row-number"></td><td>${name}</td>`;
 
     createInputs(row, config.quiz.length);
+    row.innerHTML += `<td class="total">0</td>`;
     row.innerHTML += `<td class="avg">0</td>`;
 
     createInputs(row, config.lab.length);
+    row.innerHTML += `<td class="total">0</td>`;
     row.innerHTML += `<td class="avg">0</td>`;
 
     createInputs(row, config.assign.length);
+    row.innerHTML += `<td class="total">0</td>`;
     row.innerHTML += `<td class="avg">0</td>`;
 
     createInputs(row, config.att.length);
+    row.innerHTML += `<td class="total">0</td>`;
     row.innerHTML += `<td class="avg">0</td>`;
 
     createInputs(row, config.exam.length);
+    row.innerHTML += `<td class="total">0</td>`;
     row.innerHTML += `<td class="avg">0</td>`;
 
     row.innerHTML += `<td>0</td>`; // Final Grade
@@ -705,10 +721,10 @@ function removeExamColumns() {
     document.querySelectorAll("#body tr").forEach(row => {
         const examStartIndex =
             2 +
-            config.quiz.length + 1 +
-            config.lab.length + 1 +
-            config.assign.length + 1 +
-            config.att.length + 1;
+            config.quiz.length + 2 +
+            config.lab.length + 2 +
+            config.assign.length + 2 +
+            config.att.length + 2;
 
         for (let i = 0; i < examCount; i++) {
             row.removeChild(row.children[examStartIndex]);
@@ -758,7 +774,7 @@ function submitAssessment() {
 
     let avgCellIndex = 0;
     for (let i = 0; i < groupIndex; i++) {
-        avgCellIndex += config[groupOrder[i]].length + 1;
+        avgCellIndex += config[groupOrder[i]].length + 2;
     }
     avgCellIndex += config[currentType].length - 1;
 
@@ -805,8 +821,9 @@ function computeRow(row) {
         exam: 0.30
     };
 
-    function calc(group, weight, avgCellIndex) {
-        let total = 0;
+    function calc(group, weight, totalCellIndex, avgCellIndex) {
+        let rawTotal = 0;
+        let percentTotal = 0;
 
         for (let j = 0; j < group.length; j++) {
             let val = parseFloat(inputs[i]?.value) || 0;
@@ -826,13 +843,15 @@ function computeRow(row) {
                 inputs[i].value = 0;
             }
 
-            total += (val / group[j]) * 100;
+            rawTotal += val;
+            percentTotal += (val / group[j]) * 100;
             i++;
         }
 
-        let avg = group.length ? total / group.length : 0;
+        let avg = group.length ? percentTotal / group.length : 0;
         let weighted = avg * weight;
 
+        row.children[totalCellIndex].textContent = rawTotal.toFixed(2);
         row.children[avgCellIndex].textContent = weighted.toFixed(2);
         return weighted;
     }
@@ -840,19 +859,19 @@ function computeRow(row) {
     let colIndex = 2;
     let final = 0;
 
-    final += calc(config.quiz, weights.quiz, colIndex + config.quiz.length);
-    colIndex += config.quiz.length + 1;
+    final += calc(config.quiz, weights.quiz, colIndex + config.quiz.length, colIndex + config.quiz.length + 1);
+    colIndex += config.quiz.length + 2;
 
-    final += calc(config.lab, weights.lab, colIndex + config.lab.length);
-    colIndex += config.lab.length + 1;
+    final += calc(config.lab, weights.lab, colIndex + config.lab.length, colIndex + config.lab.length + 1);
+    colIndex += config.lab.length + 2;
 
-    final += calc(config.assign, weights.assign, colIndex + config.assign.length);
-    colIndex += config.assign.length + 1;
+    final += calc(config.assign, weights.assign, colIndex + config.assign.length, colIndex + config.assign.length + 1);
+    colIndex += config.assign.length + 2;
 
-    final += calc(config.att, weights.att, colIndex + config.att.length);
-    colIndex += config.att.length + 1;
+    final += calc(config.att, weights.att, colIndex + config.att.length, colIndex + config.att.length + 1);
+    colIndex += config.att.length + 2;
 
-    final += calc(config.exam, weights.exam, colIndex + config.exam.length);
+    final += calc(config.exam, weights.exam, colIndex + config.exam.length, colIndex + config.exam.length + 1);
 
     let finalIndex = row.children.length - 4;
     let equivIndex = row.children.length - 3;
