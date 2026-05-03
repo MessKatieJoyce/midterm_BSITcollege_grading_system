@@ -237,6 +237,18 @@ th.group {
     font-weight: bold;
 }
 
+.grade-result-header {
+    background: #4a2457;
+    color: white;
+    font-weight: bold;
+}
+
+.grade-result {
+    background: #f3e8ff;
+    color: #200827;
+    font-weight: bold;
+}
+
 tr:hover {
     background: #eaf3ff;
 }
@@ -572,8 +584,8 @@ input[type="number"] {
     <th class="group" colspan="2">Assignment (10%)</th>
     <th class="group" colspan="2">Attendance (10%)</th>
     <th class="group" colspan="2">Major Exam (30%)</th>
-    <th rowspan="2">Final Grade</th>
-    <th rowspan="2">Equivalent</th>
+    <th rowspan="2" class="grade-result-header">Final Grade</th>
+    <th rowspan="2" class="grade-result-header">Equivalent</th>
     <th rowspan="2">Remarks</th>
     <th rowspan="2">Action</th>
 </tr>
@@ -803,8 +815,8 @@ function createStudentRow(name, scores = []) {
     row.innerHTML += `<td class="total">0</td>`;
     row.innerHTML += `<td class="avg">0</td>`;
 
-    row.innerHTML += `<td>0</td>`; // Final Grade
-    row.innerHTML += `<td>0</td>`; // Equivalent
+    row.innerHTML += `<td class="grade-result">0</td>`; // Final Grade
+    row.innerHTML += `<td class="grade-result">0</td>`; // Equivalent
     row.innerHTML += `<td>-</td>`; // Remarks
 
     row.innerHTML += `
@@ -854,8 +866,8 @@ function addStudent() {
     row.innerHTML += `<td class="total">0</td>`;
     row.innerHTML += `<td class="avg">0</td>`;
 
-    row.innerHTML += `<td>0</td>`; // Final Grade
-    row.innerHTML += `<td>0</td>`; // Equivalent
+    row.innerHTML += `<td class="grade-result">0</td>`; // Final Grade
+    row.innerHTML += `<td class="grade-result">0</td>`; // Equivalent
     row.innerHTML += `<td>-</td>`; // ✅ Remarks (IMPORTANT!)
 
     row.innerHTML += `
