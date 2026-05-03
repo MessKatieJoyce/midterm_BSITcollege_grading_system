@@ -119,14 +119,17 @@ input[type="text"]:hover {
 }
 
 .header-delete-btn {
-    margin-left: 0;
-    margin-right: 0;
     font-size: 11px;
     line-height: 1;
     color: #7f1d1d;
     background: white;
     border: none;
     box-shadow: none;
+}
+
+.header-delete-btn i {
+    align-items: center;
+    margin-right: 0;
 }
 
 .header-delete-btn:hover {
@@ -230,15 +233,23 @@ input[type="number"] {
     font-weight: bold;
 }
 
-.delete-btn {
-    background: #dc2626;
+
+.delete-act {
+    background: #7f1d1d;
     color: white;
-    padding: 5px 10px;
+    padding: 5px 7px;
     border-radius: 5px;
     border: none;
+    font-size: 11px;
+    margin: auto;
 }
 
-.delete-btn:hover {
+.delete-act i {
+    align-items: center;
+    margin-right: 0;
+}
+
+.delete-act:hover {
     background: #b91c1c;
 }
 
@@ -258,26 +269,41 @@ input[type="number"] {
 
 .modal-content {
     background: white;
-    padding: 20px;
+    padding: 22px 20px;
     border-radius: 10px;
-    width: 300px;
+    width: min(300px, calc(100% - 40px));
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
+.modal-content h3 {
+    margin: 0 0 10px;
+}
+
+.modal-content p {
+    margin: 8px auto 16px;
+}
+
 .modal-content input[type="number"] {
-    width: 160px;
-    padding: 5px;
+    width: 150px;
+    box-sizing: border-box;
+    padding: 9px 10px;
     text-align: center;
     background: #eaf3ff;
     backdrop-filter:blur(10px);
     border: 1px solid #75597fcb;
+    border-radius: 5px;
+    font-size: 13px;
 }
 
 .modal-content input:focus {
     outline: none;
     box-shadow: 0 0 6px #0c2761;
     background: rgba(255,255,255,0.1);
+}
+
+.modal-content button {
+    margin: 2px 3px;
 }
 
 .footer {
@@ -348,9 +374,8 @@ input[type="number"] {
         font-size: 10px;
     }
 
-    .delete-btn {
-    background: #dc2626;
-    padding: 5px 7px;
+    .delete-act i {
+    font-size: 10px;
     border: none;
     }
     
@@ -426,9 +451,7 @@ input[type="number"] {
 <h4>
     <i class="fa-solid fa-chart-line"></i> Track and Calculate Your Grades!
 </h4>
-<p>
-    Manage grades effortlessly. Add assessments, input scores, and watch the system automatically compute final grades, equivalents, and remarks in one organized dashboard.
-</p>
+
 
 <div class="control-container">
 <h3>
@@ -680,8 +703,8 @@ function addStudent() {
 
     row.innerHTML += `
     <td>
-        <button onclick="deleteRow(this)" class="delete-btn">
-            Delete
+        <button onclick="deleteRow(this)" class="delete-act" aria-label="Delete student">
+            <i class="fa-solid fa-trash"></i>
         </button>
     </td>
     `;
@@ -936,7 +959,7 @@ document.addEventListener("focusin", function(e) {
                 behavior: "smooth",
                 block: "center"
             });
-        }, 300); // wait for keyboard to open
+        }, 200); // wait for keyboard to open
     }
 });
 
