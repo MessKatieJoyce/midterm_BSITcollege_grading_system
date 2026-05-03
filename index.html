@@ -34,11 +34,160 @@ i {
         margin: 0;
 }
 
+.topbar-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .topbar h3{
-    margin-left: 20px;
+    margin: 0 0 0 4px;
     font-weight:500;
     line-height:1.2;
     font-size: 13.5px;
+}
+
+.menu-toggle,
+.sidebar-close {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #c4c7cf;
+    border-radius: 6px;
+    background: white;
+    color: #1e2228;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.menu-toggle i,
+.sidebar-close i {
+    margin-right: 0;
+}
+
+.menu-toggle:hover,
+.sidebar-close:hover {
+    background: #f3e2fa;
+    border-color: #75597fcb;
+    color: #311839;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(17, 24, 39, 0.42);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.degree-sidebar {
+    width: min(330px, calc(100% - 38px));
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-overlay.active .degree-sidebar {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: #1f1024;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.sidebar-nav {
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.sidebar-nav a,
+.teacher-menu summary {
+    color: #1f2937;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 550;
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.sidebar-nav a:hover,
+.teacher-menu summary:hover {
+    background: #f3e8ff;
+    color: #311839;
+}
+
+.sidebar-nav a.active-degree {
+    background: #311839;
+    color: white;
+}
+
+.sidebar-nav i {
+    width: 16px;
+    margin-right: 0;
+    text-align: center;
+}
+
+.teacher-menu {
+    margin: 0;
+}
+
+.teacher-menu summary {
+    list-style: none;
+    justify-content: space-between;
+}
+
+.teacher-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.teacher-menu summary .summary-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.teacher-menu summary .fa-chevron-down {
+    transition: transform 0.2s ease;
+}
+
+.teacher-menu[open] summary .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.teacher-submenu {
+    margin: 2px 0 6px 24px;
+    border-left: 2px solid #e5e7eb;
+    padding-left: 7px;
 }
 
 h2 {
@@ -395,8 +544,26 @@ input[type="number"] {
     }
 
     .topbar h3{
-        margin-left: 8px;
         font-size: 10px;
+    }
+
+    .topbar {
+        padding: 5px 10px;
+    }
+
+    .menu-toggle,
+    .sidebar-close {
+        width: 32px;
+        height: 32px;
+    }
+
+    .sidebar-header h3 {
+        font-size: 13px;
+    }
+
+    .sidebar-nav a,
+    .teacher-menu summary {
+        font-size: 12px;
     }
 
     h2 {
@@ -516,12 +683,69 @@ input[type="number"] {
 
 <body>
 <div class="topbar">
-    <h3>
-        <i class="fa-solid fa-user"></i>  Kate Joyce P. Superio | BSIT 3A
+    <div class="topbar-content">
+    <button type="button" class="menu-toggle" onclick="openDegreeSidebar()" aria-label="Open degree menu" aria-controls="degreeSidebar" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <h3><i class="fa-solid fa-user"></i>  Kate Joyce P. Superio | BSIT 3A
     </h3> 
+    </div>
 </div>
 
-<h2><i class="fa-solid fa-graduation-cap"></i> Passi City College Grading System</h2>
+<div id="degreeSidebarOverlay" class="sidebar-overlay" onclick="closeDegreeSidebar(event)">
+    <aside id="degreeSidebar" class="degree-sidebar" aria-label="Bachelor degree grading system links">
+        <div class="sidebar-header">
+            <h3>Degree Grading Systems</h3>
+            <button type="button" class="sidebar-close" onclick="closeDegreeSidebar()" aria-label="Close degree menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="homepage.html">
+                <i class="fa-solid fa-home"></i>
+                Home
+            </a>
+            <a href="business-administration.html">
+                <i class="fa-solid fa-briefcase"></i>
+                Bachelor of Science in Business Administration
+            </a>
+            <a href="criminal-justice.html">
+                <i class="fa-solid fa-scale-balanced"></i>
+                Bachelor of Science in Criminal Justice
+            </a>
+            <a href="hospitality-management.html">
+                <i class="fa-solid fa-bell-concierge"></i>
+                Bachelor of Science in Hospitality Management
+            </a>
+            <a href="index.html" class="active-degree">
+                <i class="fa-solid fa-laptop-code"></i>
+                Bachelor of Science in Information Technology
+            </a>
+            <details class="teacher-menu">
+                <summary>
+                    <span class="summary-label">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        Bachelor of Science in Teacher Education
+                    </span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
+                <div class="teacher-submenu">
+                    <a href="elementary-education.html">
+                        <i class="fa-solid fa-child-reaching"></i>
+                        Bachelor of Science in Elementary Education
+                    </a>
+                    <a href="secondary-education.html">
+                        <i class="fa-solid fa-school"></i>
+                        Bachelor of Science in Secondary Education
+                    </a>
+                </div>
+            </details>
+        </nav>
+    </aside>
+</div>
+
+<h2><i class="fa-solid fa-laptop-code"></i> BS Information Technology Grading System</h2>
 <h4>
     <i class="fa-solid fa-chart-line"></i> Track and Calculate Your Grades!
 </h4>
@@ -634,6 +858,24 @@ input[type="number"] {
 
 
 <script>
+function openDegreeSidebar() {
+    document.getElementById("degreeSidebarOverlay").classList.add("active");
+    document.querySelector(".menu-toggle").setAttribute("aria-expanded", "true");
+}
+
+function closeDegreeSidebar(event) {
+    if (event && event.target !== document.getElementById("degreeSidebarOverlay")) return;
+    document.getElementById("degreeSidebarOverlay").classList.remove("active");
+    document.querySelector(".menu-toggle").setAttribute("aria-expanded", "false");
+}
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+        document.getElementById("degreeSidebarOverlay").classList.remove("active");
+        document.querySelector(".menu-toggle").setAttribute("aria-expanded", "false");
+    }
+});
+
 let config = {
     quiz: [],
     lab: [],
